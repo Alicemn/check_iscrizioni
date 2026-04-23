@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrazioni Evento</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 32px;
+      background: #f7f7f7;
+      color: #111;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .card {
+      max-width: 420px;
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .count {
+      font-size: 48px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Registrazioni evento</h1>
+
+  <div class="card">
+    <div>Totale iscritti</div>
+    <div id="count" class="count">0</div>
+    <div id="status" class="status">Caricamento...</div>
+  </div>
+
+  <script>
+    const countEl = document.getElementById("count");
+    const statusEl = document.getElementById("status");
+
+    async function loadCount() {
+      statusEl.textContent = "Aggiornamento dati...";
+
+      try {
+        const response = await fetch("/api/registrations/count");
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(payload.error || "Richiesta non riuscita");
+        }
+
+        countEl.textContent = payload.count;
+        statusEl.textContent = "Ultimo aggiornamento completato";
+      } catch (error) {
+        statusEl.textContent = "Errore: " + error.message;
+      }
+    }
+
+    loadCount();
+    setInterval(loadCount, 5000);
+  </script>
+</body>
+</html>

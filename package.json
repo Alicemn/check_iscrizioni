@@ -1,0 +1,12 @@
+{
+  "name": "check_iscrizioni",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dashboard protetta per visualizzare le registrazioni evento da Supabase.",
+  "scripts": {
+    "start": "node --env-file=.env server.js"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  }
+}
