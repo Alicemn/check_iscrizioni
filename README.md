@@ -1,37 +1,33 @@
 # Check Iscrizioni
 
-Dashboard minimale che mostra solo il numero totale degli iscritti letto da Supabase.
+Sito statico che mostra solo il numero totale degli iscritti.
+
+Il conteggio viene aggiornato da GitHub Actions usando le repository secrets `SUPABASE_URL` e `SUPABASE_KEY`, che generano il file [count.json](/Users/alice.mioni/Documents/CornettoCritico/check_iscrizioni/count.json).
 
 ## Avvio locale
 
-Serve Node `>= 20.6.0`.
+Non serve Node. Basta servire la cartella con un server statico oppure aprire il sito pubblicato su GitHub Pages.
 
-```bash
-npm start
-```
-
-Il server legge i segreti da `.env` e avvia l'app su `http://127.0.0.1:3000`.
-
-In GitHub Actions puo anche leggere un file `.runtime-secrets.json` generato dalle repository secrets.
+In locale il sito legge `count.json`.
 
 ## Variabili ambiente
 
-Usa `.env.example` come riferimento:
+Le secrets non vengono lette dal browser. Vengono usate solo dal workflow GitHub Actions [update-count.yml](/Users/alice.mioni/Documents/CornettoCritico/check_iscrizioni/.github/workflows/update-count.yml).
 
 - `SUPABASE_URL`
 - `SUPABASE_KEY`
 
-Il file `.env` e gli altri file ambiente sono esclusi da Git tramite `.gitignore`.
+Il file `.env` non serve piu per il deploy GitHub.
 
 ## GitHub Secrets
 
-Le repository secrets non sono leggibili direttamente dal codice a runtime. Per questo il repository include il workflow [runtime-secrets.yml](/Users/alice.mioni/Documents/CornettoCritico/check_iscrizioni/.github/workflows/runtime-secrets.yml), che crea un file `.runtime-secrets.json` a partire da:
+Il workflow:
 
-- `SUPABASE_URL`
-- `SUPABASE_KEY`
-
-Se presente, `server.js` usa prima `.runtime-secrets.json`; in locale, se il file non esiste, usa `.env`.
+- usa `SUPABASE_URL` e `SUPABASE_KEY`
+- interroga Supabase
+- aggiorna `count.json`
+- fa commit automatico su `main`
 
 ## Note per GitHub
 
-Prima del push controlla che `git status` non mostri `.env`.
+Per vedere il sito aggiornato su GitHub Pages devi pubblicare la branch `main` o la cartella corretta nelle impostazioni Pages.

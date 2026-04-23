@@ -56,7 +56,9 @@
       statusEl.textContent = "Aggiornamento dati...";
 
       try {
-        const response = await fetch("/api/registrations/count");
+        const response = await fetch(`./count.json?t=${Date.now()}`, {
+          cache: "no-store"
+        });
         const payload = await response.json().catch(() => ({}));
 
         if (!response.ok) {
@@ -64,14 +66,19 @@
         }
 
         countEl.textContent = payload.count;
-        statusEl.textContent = "Ultimo aggiornamento completato";
+        const updatedAt = payload.updated_at
+          ? new Date(payload.updated_at).toLocaleString("it-CH")
+          : null;
+
+        statusEl.textContent = updatedAt
+          ? `Ultimo aggiornamento: ${updatedAt}`
+          : "Ultimo aggiornamento completato";
       } catch (error) {
         statusEl.textContent = "Errore: " + error.message;
       }
     }
 
     loadCount();
-    setInterval(loadCount, 5000);
   </script>
 </body>
 </html>
