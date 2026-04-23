@@ -2,10 +2,26 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.HOST || "127.0.0.1";
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const runtimeSecretsPath = path.join(__dirname, ".runtime-secrets.json");
+
+function loadConfig() {
+  if (fs.existsSync(runtimeSecretsPath)) {
+    return JSON.parse(fs.readFileSync(runtimeSecretsPath, "utf8"));
+  }
+
+  return {
+    PORT: process.env.PORT,
+    HOST: process.env.HOST,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_KEY: process.env.SUPABASE_KEY
+  };
+}
+
+const config = loadConfig();
+const PORT = Number(config.PORT || 3000);
+const HOST = config.HOST || "127.0.0.1";
+const SUPABASE_URL = config.SUPABASE_URL;
+const SUPABASE_KEY = config.SUPABASE_KEY;
 
 const requiredEnv = [
   ["SUPABASE_URL", SUPABASE_URL],
@@ -14,7 +30,7 @@ const requiredEnv = [
 
 if (requiredEnv.length > 0) {
   const missing = requiredEnv.map(([name]) => name).join(", ");
-  throw new Error(`Variabili mancanti nel file .env: ${missing}`);
+  throw new Error(`Variabili mancanti nella configurazione runtime: ${missing}`);
 }
 
 const indexPath = path.join(__dirname, "index.html");
